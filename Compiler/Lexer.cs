@@ -62,13 +62,7 @@ namespace ArithmeticParser
                 throw new SyntaxErrorException("Mathematical term can only contain 1-9, (, ), +, -, * or /");
             
             
-            WriteToConsole(SourceCode);
             return true;
-        }
-
-        private void WriteToConsole(string code)
-        {
-            Console.WriteLine("\"" + code + "\"");
         }
     }
 }

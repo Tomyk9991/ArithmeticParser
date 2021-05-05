@@ -1,3 +1,6 @@
+using System;
+using ArithmeticParser.Parsing;
+
 namespace ArithmeticParser
 {
     public class Compiler
@@ -11,18 +14,31 @@ namespace ArithmeticParser
             lexer = new Lexer(sourceCode);
         }
         
-        public void Compile()
+        public Executable Compile()
         {
             if (lexer.Analyse())
             {
                 Token[] tokens = lexer.CreateTokens();
 
-                foreach (var token in tokens)
-                    token.Print();
+                // for (var i = 0; i < tokens.Length; i++)
+                // {
+                //     var token = tokens[i];
+                //     Console.Write(i + 1 + ": ");
+                //     token.Print();
+                // }
 
                 this.parser = new Parser(tokens);
-                this.parser.Analyse();
+
+                if (this.parser.Analyse())
+                {
+                    Expression expression = this.parser.CachedExpression;
+                    expression.TreeView();
+                    this.semantics = new SyntaxTree(expression);
+                }
+
             }
+
+            return null;
         }
     }
 }

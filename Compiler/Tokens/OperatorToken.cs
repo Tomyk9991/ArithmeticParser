@@ -14,6 +14,11 @@ namespace ArithmeticParser
             base.PrintToConsole(this.Operation.ToString());
         }
 
+        public override string ToString()
+        {
+            return this.Operation.ToString();
+        }
+
         public static Operation FromChar(char value)
         {
             return value switch

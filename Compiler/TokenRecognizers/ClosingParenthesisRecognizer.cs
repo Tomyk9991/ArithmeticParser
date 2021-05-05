@@ -7,7 +7,7 @@ namespace ArithmeticParser
             if (code[0] == ')')
             {
                 code = code[1..];
-                return new Parenthesis(')');
+                return new ParenthesisToken(')');
             }
 
             return null;

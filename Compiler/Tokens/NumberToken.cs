@@ -15,5 +15,10 @@ namespace ArithmeticParser
         {
             base.PrintToConsole(this.Value.ToString());
         }
+
+        public override string ToString()
+        {
+            return Value.ToString();
+        }
     }
 }

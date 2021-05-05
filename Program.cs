@@ -6,7 +6,7 @@ namespace ArithmeticParser
     {
         public static void Main(string[] args)
         {
-            string sourceCode = "(2 +)) 3)";
+            string sourceCode = "(2 + (3 + 4))";
 
             Compiler compiler = new Compiler(sourceCode);
             compiler.Compile();
