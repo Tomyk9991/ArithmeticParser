@@ -9,9 +9,9 @@ namespace ArithmeticParser
             string sourceCode = "(2 + (3 + 4))";
 
             Compiler compiler = new Compiler(sourceCode);
-            compiler.Compile();
-            
-            
+            Executable exe = compiler.Compile();
+            exe.Execute();
+
             // Executable executable = compiler.Compile(sourceCode);
 
             // int result = executable.Execute();

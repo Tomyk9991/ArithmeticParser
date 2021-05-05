@@ -13,6 +13,12 @@ namespace ArithmeticParser
         {
             lexer = new Lexer(sourceCode);
         }
+
+        public Executable Recompile(string sourceCode)
+        {
+            this.lexer = new Lexer(sourceCode);
+            return this.Compile();
+        }
         
         public Executable Compile()
         {
@@ -34,6 +40,8 @@ namespace ArithmeticParser
                     Expression expression = this.parser.CachedExpression;
                     expression.TreeView();
                     this.semantics = new SyntaxTree(expression);
+
+                    return new Executable(this.semantics);
                 }
 
             }

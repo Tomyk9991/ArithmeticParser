@@ -11,7 +11,7 @@ namespace ArithmeticParser
         
         public int Execute()
         {
-            return 0;
+            return tree.Execute();
         }
     }
 }

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Data;
 using ArithmeticParser.Parsing;
 
@@ -9,7 +8,9 @@ namespace ArithmeticParser
     {
         public Expression CachedExpression { get; private set; }
         
+        
         private Token[] tokens;
+        private int i = 0;
         public Parser(Token[] tokens)
         {
             this.tokens = tokens;
@@ -29,7 +30,7 @@ namespace ArithmeticParser
             Expression expression = new Expression();
             try
             {
-                BuildExpressions(expression, 0);
+                expression = BuildExpressions(expression, i);
             }
             catch (Exception e)
             {
@@ -42,11 +43,17 @@ namespace ArithmeticParser
 
         private Expression BuildExpressions(Expression expression, int startIndex)
         {
-            for (int i = startIndex; i < tokens.Length; i++)
+            while(startIndex < tokens.Length)
             {
                 //Still work to do, but Expression is already full.
                 //Move the content of the root into the lhs 
                 if (expression.Defined)
+                {
+                    Expression LHS = new Expression(expression);
+                    Expression operation = BuildExpressions(expression, i);
+                    Expression RHS = BuildExpressions(expression, i);
+                }
+                
                 if (i < tokens.Length - 1 && tokens[i] is ParenthesisToken)
                 {
                     ParenthesisToken parenthesisToken = (ParenthesisToken) tokens[i];
@@ -54,21 +61,23 @@ namespace ArithmeticParser
                     if (parenthesisToken.Value == '(')
                     {
                         Expression e = new Expression();
-                        
-                        Expression lhs = BuildExpressions(expression, i + 1);
-                        Expression operation = BuildExpressions(expression, i + 2);
-                        Expression rhs = BuildExpressions(expression, i + 3);
 
-                        i += 4;
-                        
+                        i++;
+                        Expression lhs = BuildExpressions(e, i);
+                        i++;
+                        Expression operation = BuildExpressions(e, i);
+                        i++;
+                        Expression rhs = BuildExpressions(e, i);
+                        i++;
+
                         if (tokens[i] is ParenthesisToken && (tokens[i] as ParenthesisToken).Value == ')')
                         {
                             e.Set(int.MaxValue, operation.Operation, lhs, rhs);
-                            
-                            if (i == tokens.Length - 1)
-                                return e;
-                            
-                            continue;
+                            return e;
+                            // if (i == tokens.Length - 1)
+                            //     return e;
+                            //
+                            // continue;
                         }
 
                         throw new SyntaxErrorException("Missing closing bracket");

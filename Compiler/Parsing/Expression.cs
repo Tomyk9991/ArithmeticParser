@@ -23,6 +23,14 @@ namespace ArithmeticParser.Parsing
             RHS = null;
         }
 
+        public Expression(Expression e)
+        {
+            this.Value = e.Value;
+            this.Operation = e.Operation;
+            this.LHS = e.LHS;
+            this.RHS = e.RHS;
+        }
+
         public Expression(int value, Operation operation, Expression lhs, Expression rhs)
         {
             this.Value = value;
@@ -69,7 +77,7 @@ namespace ArithmeticParser.Parsing
                 indent += "| ";
             }
             
-            Console.WriteLine(this.ToString());
+            Console.WriteLine(this.ToInnerString());
             
             var children = new List<Expression>();
             
@@ -80,6 +88,54 @@ namespace ArithmeticParser.Parsing
             {
                 children[i].TreeView(indent, i == children.Count - 1);
             }
+        }
+
+        private string ToInnerString()
+        {
+            if (this.Defined)
+                return this.Operation.ToString();
+            
+            string lhs = this.LHS?.ToString() ?? "NULL";
+            string rhs = this.RHS?.ToString() ?? "NULL";
+
+
+            if (this.Value != int.MaxValue && lhs == "NULL" && rhs == "NULL")
+                return this.Value.ToString();
+
+            if (this.Operation != Operation.Noop && lhs == "NULL" && rhs == "NULL")
+                return this.Operation.ToString();
+
+            return string.Join(' ', lhs, this.Operation, rhs);
+        }
+
+        public int Evaluate()
+        {
+            if (this.LHS != null && this.RHS != null)
+            {
+                int var1 = this.LHS.Evaluate();
+                int var2 = this.RHS.Evaluate();
+                
+                if (var2 == 0 && this.Operation == Operation.Division)
+                    throw new DivideByZeroException();
+
+                switch (this.Operation)
+                {
+                    case Operation.Addition:
+                        return var1 + var2;
+                    case Operation.Subtraction:
+                        return var1 - var2;
+                    case Operation.Multiplication:
+                        return var1 * var2;
+                    case Operation.Division:
+                        return var1 / var2;
+                }
+            }
+
+            if (this.Value != int.MaxValue)
+                return this.Value;
+            
+            
+            throw new ArgumentOutOfRangeException("Something went wrong");
         }
     }
 }
