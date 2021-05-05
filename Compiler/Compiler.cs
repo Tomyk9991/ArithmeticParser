@@ -16,11 +16,12 @@ namespace ArithmeticParser
             if (lexer.Analyse())
             {
                 Token[] tokens = lexer.CreateTokens();
-                
-                for (int i = 0; i < tokens.Length; i++)
-                {
-                    tokens[i].Print();
-                }
+
+                foreach (var token in tokens)
+                    token.Print();
+
+                this.parser = new Parser(tokens);
+                this.parser.Analyse();
             }
         }
     }
