@@ -6,15 +6,10 @@ namespace ArithmeticParser
     {
         public static void Main(string[] args)
         {
-            string sourceCode = "(2 + (3 + 4))";
+            string sourceCode = "(2 + 3) + 4";
 
             Compiler compiler = new Compiler(sourceCode);
-            Executable exe = compiler.Compile();
-            exe.Execute();
-
-            // Executable executable = compiler.Compile(sourceCode);
-
-            // int result = executable.Execute();
+            Console.WriteLine(compiler.Evaluate("(2 + 3) + 4"));
         }
     }
 }
