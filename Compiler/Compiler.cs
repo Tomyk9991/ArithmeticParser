@@ -16,7 +16,7 @@ namespace ArithmeticParser
         IExpression Mul(IExpression other);
         IExpression Div(IExpression other);
 
-        public void TreeView(string indent = "", bool last = true);
+        public string TreeView(string indent = "", bool last = true);
     }
 
     public enum Operation
@@ -45,19 +45,32 @@ namespace ArithmeticParser
             InitCompiler(sourceCode);
         }
 
+        
+        public IExpression SyntaxTree
+        {
+            get;
+            private set;
+        }
+
         private void InitCompiler(string sourceCode)
         {
             this.sourceCode = sourceCode;
         }
 
+        public double Evaluate()
+        {
+            if (!string.IsNullOrEmpty(this.sourceCode))
+            {
+                return Parse().Evaluate();
+            }
+
+            throw new Exception("No string for evaluation present");
+        }
+        
         public double Evaluate(string sourceCode)
         {
             InitCompiler(sourceCode);
-            IExpression e = Parse();
-            
-            e.TreeView();
-            
-            return e.Evaluate();
+            return Parse().Evaluate();
         }
 
         void nextChar()
@@ -79,10 +92,12 @@ namespace ArithmeticParser
 
         private IExpression Parse()
         {
+            this.sourceCode = this.sourceCode.Replace('.', ',');
+            
             nextChar();
-            IExpression x = ParseExpression();
+            this.SyntaxTree = ParseExpression();
             if (pos < this.sourceCode.Length) throw new Exception("Unexpected: " + (char) ch);
-            return x;
+            return this.SyntaxTree;
         }
 
         private IExpression ParseExpression()
@@ -133,7 +148,7 @@ namespace ArithmeticParser
             }
             else if (ch >= '0' && ch <= '9' || ch == '.')
             {
-                while (ch >= '0' && ch <= '9' || ch == '.') nextChar();
+                while (ch >= '0' && ch <= '9' || ch == ',' || ch == '.') nextChar();
                 x = new Expression(double.Parse(this.sourceCode.Substring(startPos, this.pos - startPos)));
             }
             else if (ch >= 'a' && ch <= 'z')
@@ -142,23 +157,15 @@ namespace ArithmeticParser
                 while (ch >= 'a' && ch <= 'z') nextChar();
                 String func = this.sourceCode.Substring(startPos, this.pos - startPos);
                 x = ParseFactor();
-                if (func == "sqrt")
+                
+                x = func switch
                 {
-                    x = new Expression(Math.Sqrt(x.Evaluate()));
-                }
-                else if (func == "sin")
-                {
-                    x = new Expression(Math.Sin(x.Evaluate()));
-                }
-                else if (func == "cos")
-                {
-                    x = new Expression(Math.Cos(x.Evaluate()));
-                }
-                else if (func == "tan")
-                {
-                    x = new Expression(Math.Tan(x.Evaluate()));
-                }
-                else throw new Exception("Unknown function: " + func);
+                    "sqrt" => new Expression("Sqrt", x, Math.Sqrt(x.Evaluate())),
+                    "sin" => new Expression("Sin", x, Math.Sin(x.Evaluate())),
+                    "cos" => new Expression("Cos", x, Math.Cos(x.Evaluate())),
+                    "tan" => new Expression("Tan", x, Math.Tan(x.Evaluate())),
+                    _ => throw new Exception("Unknown function: " + func)
+                };
             }
             else
             {

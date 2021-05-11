@@ -6,10 +6,11 @@ namespace ArithmeticParser
     {
         public static void Main(string[] args)
         {
-            string sourceCode = "(2 + (3 + 4)) + 5";
+            string sourceCode = "sin(2.1321 * 3) * 3";
 
             Compiler compiler = new Compiler(sourceCode);
-            Console.WriteLine(compiler.Evaluate(sourceCode));
+            Console.WriteLine(compiler.Evaluate());
+            Console.WriteLine(compiler.SyntaxTree.TreeView());
         }
     }
 }

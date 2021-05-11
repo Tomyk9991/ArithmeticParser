@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace ArithmeticParser
 {
@@ -15,6 +16,13 @@ namespace ArithmeticParser
             Value = val;
         }
 
+        public Expression(string func, IExpression lhs, double value)
+        {
+            this.Func = func;
+            this.LHS = lhs;
+            this.Value = value;
+        }
+
         private Expression(IExpression lhs, Operation op, IExpression rhs, double value)
         {
             this.LHS = lhs;
@@ -25,14 +33,16 @@ namespace ArithmeticParser
         }
         
         public bool Defined =>
-            Value == int.MaxValue &&
+            Value == double.NaN &&
             this.OP != Operation.NOOP &&
             this.LHS != null && this.RHS != null;
 
-        public IExpression LHS { get; set; }
-        public IExpression RHS { get; set; }
-        public Operation OP { get; set; }
-        public double Value { get; set; }
+        public IExpression LHS { get; set; } = null;
+        public IExpression RHS { get; set; } = null;
+        public Operation OP { get; set; } = Operation.NOOP;
+        public double Value { get; set; } = Double.NaN;
+
+        public string Func { get; set; } = "";
         
         
         public double Evaluate() => Value;
@@ -57,21 +67,21 @@ namespace ArithmeticParser
             return new Expression(this, Operation.DIV, other, this.Value / other.Evaluate());
         }
 
-        public void TreeView(string indent = "", bool last = true)
+        public string TreeView(string indent = "", bool last = true)
         {
-            Console.Write(indent);
+            StringBuilder builder = new StringBuilder(indent);
             if (last)
             {
-                Console.Write("└─");
+                builder.Append("└─");
                 indent += "  ";
             }
             else
             {
-                Console.Write("├─");
+                builder.Append("├─");
                 indent += "| ";
             }
-            
-            Console.WriteLine(this.ToInnerString());
+
+            builder.Append(this.ToInnerString()).Append('\n');
             
             var children = new List<IExpression>();
             
@@ -80,8 +90,10 @@ namespace ArithmeticParser
             
             for (int i = 0; i < children.Count; i++)
             {
-                children[i].TreeView(indent, i == children.Count - 1);
+                builder.Append(children[i].TreeView(indent, i == children.Count - 1));
             }
+
+            return builder.ToString();
         }
         
         public override string ToString()
@@ -90,8 +102,8 @@ namespace ArithmeticParser
             string rhs = this.RHS?.ToString() ?? "NULL";
 
 
-            if (this.Value != int.MaxValue && lhs == "NULL" && rhs == "NULL")
-                return this.Value.ToString();
+            if (this.Value != double.NaN && lhs == "NULL" && rhs == "NULL")
+                return this.Value % 1 == 0 ? this.Value.ToString() : this.Value.ToString("F");
 
             if (this.OP != Operation.NOOP && lhs == "NULL" && rhs == "NULL")
                 return this.OP.ToString();
@@ -103,18 +115,23 @@ namespace ArithmeticParser
         {
             if (this.Defined)
                 return this.OP.ToString();
+
+            if (!string.IsNullOrEmpty(this.Func))
+            {
+                return this.Value % 1 == 0 ? this.Value.ToString() : this.Value.ToString("F") + ", " + this.Func.ToUpper();
+            }
             
             string lhs = this.LHS?.ToString() ?? "NULL";
             string rhs = this.RHS?.ToString() ?? "NULL";
 
 
-            if (this.Value != int.MaxValue && this.LHS == null && this.RHS == null)
-                return this.Value.ToString();
+            if (this.Value != double.NaN && this.LHS == null && this.RHS == null)
+                return this.Value % 1 == 0 ? this.Value.ToString() : this.Value.ToString("F");
 
             if (this.OP != Operation.NOOP && this.LHS == null && this.RHS == null)
                 return this.OP.ToString();
 
-            return string.Join(' ', this.Value + ", " + this.OP);
+            return string.Join(' ', this.Value % 1 == 0 ? this.Value.ToString() : this.Value.ToString("F") + ", " + this.OP);
         }
     }
 }
