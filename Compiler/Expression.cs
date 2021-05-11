@@ -81,7 +81,8 @@ namespace ArithmeticParser
                 indent += "| ";
             }
 
-            builder.Append(this.ToInnerString()).Append('\n');
+            string inner = this.ToInnerString();
+            builder.Append(inner).Append('\n');
             
             var children = new List<IExpression>();
             
@@ -113,9 +114,6 @@ namespace ArithmeticParser
         
         private string ToInnerString()
         {
-            if (this.Defined)
-                return this.OP.ToString();
-
             if (!string.IsNullOrEmpty(this.Func))
             {
                 return this.Value % 1 == 0 ? this.Value.ToString() : this.Value.ToString("F") + ", " + this.Func.ToUpper();
@@ -131,7 +129,7 @@ namespace ArithmeticParser
             if (this.OP != Operation.NOOP && this.LHS == null && this.RHS == null)
                 return this.OP.ToString();
 
-            return string.Join(' ', this.Value % 1 == 0 ? this.Value.ToString() : this.Value.ToString("F") + ", " + this.OP);
+            return string.Join(", ", this.Value % 1 == 0 ? this.Value.ToString() : this.Value.ToString("F"), this.OP);
         }
     }
 }
