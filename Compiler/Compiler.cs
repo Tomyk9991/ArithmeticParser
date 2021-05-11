@@ -1,4 +1,5 @@
 using System;
+using ArithmeticParser.Exceptions;
 
 namespace ArithmeticParser
 {
@@ -69,7 +70,7 @@ namespace ArithmeticParser
             
             nextChar();
             this.SyntaxTree = ParseExpression();
-            if (pos < this.sourceCode.Length) throw new Exception("Unexpected: " + (char) ch);
+            if (pos < this.sourceCode.Length) throw new SyntaxException("Unexpected: " + "\"" + (char) ch + "\"");
             return this.SyntaxTree;
         }
 
@@ -116,7 +117,7 @@ namespace ArithmeticParser
                 x = ParseExpression();
                 if (!Eat(')'))
                 {
-                    throw new Exception("Expected: )");
+                    throw new SyntaxException("Expected: \")\"");
                 }
             }
             else if (ch >= '0' && ch <= '9' || ch == '.')
@@ -142,7 +143,7 @@ namespace ArithmeticParser
             }
             else
             {
-                throw new Exception("Unexpected: " + (char) ch);
+                throw new SyntaxException("Unexpected: " + "\"" + (char) ch + "\"");
             }
 
             if (Eat('^'))

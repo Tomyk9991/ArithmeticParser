@@ -64,7 +64,12 @@ namespace ArithmeticParser
 
         public IExpression Div(IExpression other)
         {
-            return new Expression(this, Operation.DIV, other, this.Value / other.Evaluate());
+            double val2 = other.Evaluate();
+            
+            if (val2 == 0)
+                throw new DivideByZeroException();
+            
+            return new Expression(this, Operation.DIV, other, this.Value / val2);
         }
 
         public string TreeView(string indent = "", bool last = true)
