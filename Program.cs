@@ -6,7 +6,7 @@ namespace ArithmeticParser
     {
         public static void Main(string[] args)
         {
-            string sourceCode = "(2 + 3 + 4 + 5 * 3) / 2";
+            string sourceCode = "((4 - 2^3 + 1) * -sqrt(3*3+4*4)) / 2";
 
             Compiler compiler = new Compiler(sourceCode);
             Console.WriteLine(compiler.Evaluate());

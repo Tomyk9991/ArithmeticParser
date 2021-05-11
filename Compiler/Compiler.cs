@@ -96,21 +96,22 @@ namespace ArithmeticParser
             }
         }
 
-        IExpression ParseFactor()
+        private IExpression ParseFactor()
         {
+            IExpression x;
             if (Eat('+'))
             {
-                var e = new Expression(ParseFactor());
-                return e;
+                x = ParseFactor();
+                return x;
             }
 
             if (Eat('-'))
             {
-                var e = new Expression(-ParseFactor().Evaluate());
-                return new Expression(e);
+                x = ParseFactor();
+                x.Value *= -1;
+                return x;
             }
 
-            IExpression x;
             int startPos = this.pos;
             if (Eat('('))
             {
@@ -148,7 +149,7 @@ namespace ArithmeticParser
 
             if (Eat('^'))
             {
-                x = new Expression(Math.Pow(x.Evaluate(), ParseFactor().Evaluate())); // exponentiation
+                x = x.Pow(ParseFactor());
             }
 
             return x;

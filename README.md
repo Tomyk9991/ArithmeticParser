@@ -52,3 +52,11 @@ public void BasicExpression_5()
     Assert.Equal(7.5, value);
 }
 ```
+
+## Syntax Tree
+
+![](https://i.imgur.com/BelKE9r.png)
+
+### The result:
+
+![](https://i.imgur.com/23XggM1.png)

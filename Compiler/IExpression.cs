@@ -13,6 +13,7 @@ namespace ArithmeticParser
         IExpression Sub(IExpression other);
         IExpression Mul(IExpression other);
         IExpression Div(IExpression other);
+        IExpression Pow(IExpression other);
 
         public string TreeView(string indent = "", bool last = true);
     }

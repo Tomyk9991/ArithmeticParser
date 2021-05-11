@@ -72,6 +72,11 @@ namespace ArithmeticParser
             return new Expression(this, Operation.DIV, other, this.Value / val2);
         }
 
+        public IExpression Pow(IExpression other)
+        {
+            return new Expression(this, Operation.POW, other, Math.Pow(this.Value, other.Evaluate()));
+        }
+
         public string TreeView(string indent = "", bool last = true)
         {
             StringBuilder builder = new StringBuilder(indent);
@@ -121,11 +126,12 @@ namespace ArithmeticParser
         {
             if (!string.IsNullOrEmpty(this.Func))
             {
-                return this.Value % 1 == 0 ? this.Value.ToString() : this.Value.ToString("F") + ", " + this.Func.ToUpper();
+                return (this.Value % 1 == 0 ? this.Value.ToString() : this.Value.ToString("F")) + ", " + this.Func.ToUpper();
             }
             
             string lhs = this.LHS?.ToString() ?? "NULL";
             string rhs = this.RHS?.ToString() ?? "NULL";
+            
 
 
             if (this.Value != double.NaN && this.LHS == null && this.RHS == null)
